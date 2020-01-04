@@ -41,8 +41,12 @@ String decrypte(String str, int D, int N){
     }
   }
   cipherText[n++] = str.substring(t, i);
-  for(int i=0;i<len;i++)
-    Serial.print(String(cipherText[i].toInt())+" ");
+  String plainText = "";
+  for(int i=0;i<len;i++){
+    char letter = (crypto(cipherText[i].toInt(), D, N));
+    Serial.print(String(crypto(cipherText[i].toInt(), D, N))+" ");
+    plainText+=letter;
+  }
   
-  return ";";
+  return plainText;
 }

@@ -32,6 +32,12 @@ welement wvector::get(int t){
     return els[t];
   return empty;
 }
+welement wvector::get(String key){
+  for(int i=0;i<index;i++)
+    if(els[i].key==key)
+      return els[i];
+  return empty;
+}
 
 void wvector::set(int i, String val){
   if(i>-1&&i<index)

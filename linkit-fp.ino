@@ -3,7 +3,7 @@
 #include "welement.h"
 #include "algorithm.h"
 
-const int pemkey = 7, modulus = 31553;
+const int pemkey = 53, modulus = 45173;
 char ssid[] = "pornhub";
 char pass[] = "pornhub.com";
 int keyIndex = 0;                 // your network key Index number (needed only for WEP)
@@ -26,6 +26,7 @@ void setup() {
   }
   server.begin();
   printWifiStatus();
+  pinMode(LED_BUILTIN, OUTPUT);
 }
 
 
@@ -57,8 +58,9 @@ void loop() {
           query.solve(url, &query);
           Serial.println("parameter length: "+String(query.len));
           for(int i=0;i<query.length();i++){
+            String plainText = decrypte(query.get(i).val, pemkey, modulus);
+            query.set(i, plainText);
             Serial.println(String(i)+" - key: "+query.get(i).key+", value: "+query.get(i).val);
-            Serial.println( decrypte(query.get(i).val, pemkey, modulus) );
           }
           welement obj;
 
@@ -66,6 +68,18 @@ void loop() {
           for(int i=0;i<query.length();i++){
             Serial.println(obj.key);
           }
+          
+          String action = query.get("action").val;
+          if(action=="開"||action=="on"){
+            Serial.println("light been turn on!!");
+            digitalWrite(LED_BUILTIN, HIGH);
+          }else if(action=="關"||action=="off"){
+            Serial.println("now, light been turn off");
+            digitalWrite(LED_BUILTIN, LOW);
+          }else{
+            Serial.println("action: "+action);  
+          }
+          Serial.println(query.get("action").val+": "+query.get("turn").val);
           // send a standard http response header
           client.println("HTTP/1.1 200 OK");
           client.println("Content-Type: text/html");
@@ -74,16 +88,10 @@ void loop() {
           client.println();
           client.println("<!DOCTYPE HTML>");
           client.println("<html>");
+          client.println("<body>");
           client.println(url);
-          // output the value of each analog input pin
-          for (int analogChannel = A0; analogChannel <= A3; analogChannel++) {
-            int sensorReading = analogRead(analogChannel);
-            client.print("analog input ");
-            client.print(analogChannel);
-            client.print(" is ");
-            client.print(sensorReading);
-            client.println("<br />");
-          }
+          client.println("<h1>"+query.get("action").val+": "+query.get("turn").val+"</h1>");
+          client.println("</body>");
           client.println("</html>");
           break;
         }
