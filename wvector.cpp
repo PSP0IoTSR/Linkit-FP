@@ -33,6 +33,11 @@ welement wvector::get(int t){
   return empty;
 }
 
+void wvector::set(int i, String val){
+  if(i>-1&&i<index)
+    els[i].val = val;
+}
+
 void wvector::solve(String url, wvector *query){
 //  Serial.println("url: "+url);
   int sp = -1;

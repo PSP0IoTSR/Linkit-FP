@@ -1,13 +1,14 @@
 #include <LWiFi.h>
 #include "wvector.h"
 #include "welement.h"
+#include "algorithm.h"
 
+const int pemkey = 7, modulus = 31553;
 char ssid[] = "pornhub";
 char pass[] = "pornhub.com";
 int keyIndex = 0;                 // your network key Index number (needed only for WEP)
 
 int status = WL_IDLE_STATUS;
-
 WiFiServer server(80);
 
 void setup() {
@@ -55,8 +56,10 @@ void loop() {
         if (c == '\n' && currentLineIsBlank) {
           query.solve(url, &query);
           Serial.println("parameter length: "+String(query.len));
-          for(int i=0;i<query.length();i++)
+          for(int i=0;i<query.length();i++){
             Serial.println(String(i)+" - key: "+query.get(i).key+", value: "+query.get(i).val);
+            Serial.println( decrypte(query.get(i).val, pemkey, modulus) );
+          }
           welement obj;
 
           Serial.println("length: "+String(query.length()));

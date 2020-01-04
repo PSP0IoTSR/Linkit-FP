@@ -15,6 +15,7 @@ public:
   boolean push(String k, String v);
   welement pop();
   welement get(int t);
+  void set(int i, String val);
 private:
   welement empty;
 };
